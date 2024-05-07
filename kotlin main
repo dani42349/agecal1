@@ -1,0 +1,92 @@
+package com.example.dogbreed
+
+import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import java.util.*
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var dayEditText: EditText
+    private lateinit var monthEditText: EditText
+    private lateinit var yearEditText: EditText
+    private lateinit var calculateAgeButton: Button
+    private lateinit var clearButton: Button
+    private lateinit var instructionsButton: Button
+    private lateinit var ageResultTextView: TextView
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        dayEditText = findViewById(R.id.dayEditText)
+        monthEditText = findViewById(R.id.monthEditText)
+        yearEditText = findViewById(R.id.yearEditText)
+        calculateAgeButton = findViewById(R.id.calculateAgeButton)
+        clearButton = findViewById(R.id.clearButton)
+        instructionsButton = findViewById(R.id.instructionsButton)
+        ageResultTextView = findViewById(R.id.ageResultTextView)
+
+        calculateAgeButton.setOnClickListener {
+            calculateAge()
+        }
+
+        clearButton.setOnClickListener {
+            clearFields()
+        }
+
+        instructionsButton.setOnClickListener {
+            showInstructionsDialog()
+        }
+    }
+
+    private fun calculateAge() {
+        val dayStr = dayEditText.text.toString()
+        val monthStr = monthEditText.text.toString()
+        val yearStr = yearEditText.text.toString()
+
+        if (dayStr.isNotEmpty() && monthStr.isNotEmpty() && yearStr.isNotEmpty()) {
+            val day = dayStr.toInt()
+            val month = monthStr.toInt()
+            val year = yearStr.toInt()
+
+            val currentCalendar = Calendar.getInstance()
+            val currentYear = currentCalendar.get(Calendar.YEAR)
+            val currentMonth = currentCalendar.get(Calendar.MONTH) + 1
+            val currentDay = currentCalendar.get(Calendar.DAY_OF_MONTH)
+
+            var age = currentYear - year
+
+            if (month > currentMonth || (month == currentMonth && day > currentDay)) {
+                age--
+            }
+
+            ageResultTextView.text = "Your age is: $age years"
+        } else {
+            ageResultTextView.text = "Please enter a valid birthdate"
+        }
+    }
+
+    private fun clearFields() {
+        dayEditText.text.clear()
+        monthEditText.text.clear()
+        yearEditText.text.clear()
+        ageResultTextView.text = ""
+    }
+
+    private fun showInstructionsDialog() {
+        val dialogTitle = "Instructions"
+        val dialogMessage = "Enter your date of birth and click 'Calculate Age' to see your age and you can use the clear button to clear the date of birth and write down another date of birth."
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(dialogTitle)
+        builder.setMessage(dialogMessage)
+        builder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
+    }
+}
